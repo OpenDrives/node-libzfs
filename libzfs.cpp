@@ -402,6 +402,99 @@ NAN_METHOD(GetPoolStatus) {
 
 }
 
+NAN_METHOD(GetEnumValue) {
+	v8::String::Utf8Value param1(info[0]->ToString());
+    // convert it to string
+    std::string enumname = std::string(*param1);
+    info.GetReturnValue().Set(Nan::New<v8::String>("UNKNOWN!").ToLocalChecked());
+
+    int value  = info[1]->Uint32Value();
+    if(enumname== "status"){
+		switch(value){
+    		case ZPOOL_STATUS_CORRUPT_CACHE: 
+    			info.GetReturnValue().Set(Nan::New<v8::String>("CORRUPT_CACHE").ToLocalChecked());
+    			break;
+    		case ZPOOL_STATUS_MISSING_DEV_R:
+    			info.GetReturnValue().Set(Nan::New<v8::String>("MISSING_DEV_R").ToLocalChecked());
+    			break;
+    		case ZPOOL_STATUS_MISSING_DEV_NR:
+    			info.GetReturnValue().Set(Nan::New<v8::String>("MISSING_DEV_NR").ToLocalChecked());
+    			break;
+    		case ZPOOL_STATUS_CORRUPT_LABEL_R:
+    			info.GetReturnValue().Set(Nan::New<v8::String>("CORRUPT_LABEL_R").ToLocalChecked());
+    			break;
+    		case ZPOOL_STATUS_CORRUPT_LABEL_NR:
+    			info.GetReturnValue().Set(Nan::New<v8::String>("CORRUPT_LABEL_NR").ToLocalChecked());
+    			break;
+    		case ZPOOL_STATUS_BAD_GUID_SUM:
+    			info.GetReturnValue().Set(Nan::New<v8::String>("BAD_GUID_SUM").ToLocalChecked());
+    			break;
+    		case ZPOOL_STATUS_CORRUPT_POOL:
+    			info.GetReturnValue().Set(Nan::New<v8::String>("CORRUPT_POOL").ToLocalChecked());
+    			break;
+    		case ZPOOL_STATUS_CORRUPT_DATA:
+    			info.GetReturnValue().Set(Nan::New<v8::String>("CORRUPT_DATA").ToLocalChecked());
+    			break;
+    		case ZPOOL_STATUS_FAILING_DEV:
+    			info.GetReturnValue().Set(Nan::New<v8::String>("FAILING_DEV").ToLocalChecked());
+    			break;
+    		case ZPOOL_STATUS_VERSION_NEWER:
+    			info.GetReturnValue().Set(Nan::New<v8::String>("VERSION_NEWER").ToLocalChecked());
+    			break;
+    		case ZPOOL_STATUS_HOSTID_MISMATCH:
+    			info.GetReturnValue().Set(Nan::New<v8::String>("HOSTID_MISMATCH").ToLocalChecked());
+    			break;
+    		case ZPOOL_STATUS_IO_FAILURE_WAIT:
+    			info.GetReturnValue().Set(Nan::New<v8::String>("IO_FAILURE_WAIT").ToLocalChecked());
+    			break;
+     		case ZPOOL_STATUS_IO_FAILURE_CONTINUE:
+    			info.GetReturnValue().Set(Nan::New<v8::String>("IO_FAILURE_CONTINUE").ToLocalChecked());
+    			break;
+     		case ZPOOL_STATUS_BAD_LOG:
+    			info.GetReturnValue().Set(Nan::New<v8::String>("BAD_LOG").ToLocalChecked());
+    			break;
+     		case ZPOOL_STATUS_UNSUP_FEAT_READ:
+    			info.GetReturnValue().Set(Nan::New<v8::String>("UNSUP_FEAT_READ").ToLocalChecked());
+    			break;
+     		case ZPOOL_STATUS_UNSUP_FEAT_WRITE:
+    			info.GetReturnValue().Set(Nan::New<v8::String>("UNSUP_FEAT_WRITE").ToLocalChecked());
+    			break;
+     		case ZPOOL_STATUS_FAULTED_DEV_R:
+    			info.GetReturnValue().Set(Nan::New<v8::String>("FAULTED_DEV_R").ToLocalChecked());
+    			break;
+     		case ZPOOL_STATUS_FAULTED_DEV_NR:
+    			info.GetReturnValue().Set(Nan::New<v8::String>("FAULTED_DEV_NR").ToLocalChecked());
+    			break;
+    		case ZPOOL_STATUS_VERSION_OLDER:
+    			info.GetReturnValue().Set(Nan::New<v8::String>("VERSION_OLDER").ToLocalChecked());
+    			break;
+
+    		case ZPOOL_STATUS_FEAT_DISABLED:
+    			info.GetReturnValue().Set(Nan::New<v8::String>("FEAT_DISABLED").ToLocalChecked());
+    			break;
+    		case ZPOOL_STATUS_RESILVERING:
+    			info.GetReturnValue().Set(Nan::New<v8::String>("RESILVERING").ToLocalChecked());
+    			break;
+    		case ZPOOL_STATUS_OFFLINE_DEV:
+    			info.GetReturnValue().Set(Nan::New<v8::String>("OFFLINE_DEV").ToLocalChecked());
+    			break;
+
+    		case ZPOOL_STATUS_REMOVED_DEV:
+    			info.GetReturnValue().Set(Nan::New<v8::String>("REMOVED_DEV").ToLocalChecked());
+    			break;
+
+    		case ZPOOL_STATUS_OK:
+    			info.GetReturnValue().Set(Nan::New<v8::String>("OK").ToLocalChecked());
+    			break;
+		}
+    }else{
+    	info.GetReturnValue().Set(false);
+    }
+
+
+}  
+
+
 NAN_METHOD(ReadLabel) {  
    // get the param
     v8::String::Utf8Value param1(info[0]->ToString());
@@ -456,6 +549,8 @@ NAN_MODULE_INIT(Init) {
         GetFunction(New<FunctionTemplate>(ReadLabel)).ToLocalChecked());
    Nan::Set(target, New<String>("GetPoolStatus").ToLocalChecked(),
         GetFunction(New<FunctionTemplate>(GetPoolStatus)).ToLocalChecked());
+   Nan::Set(target, New<String>("GetEnumValue").ToLocalChecked(),
+        GetFunction(New<FunctionTemplate>(GetEnumValue)).ToLocalChecked());
 }
 
 NODE_MODULE(node_libzfs, Init)

@@ -1,9 +1,10 @@
 {
   "name": "node-libzfs",
-  "version": "1.0.0-a10",
+  "version": "1.0.0-a11",
   "description": "node connector to libzfs",
   "bin": {
-    "node-zpool": "bin/node-zpool.js"
+    "node-zpool": "bin/node-zpool.js",
+    "node-zlabels": "bin/node-zlabels.js"
   },
   "main": "libzfs.js",
   "scripts": {
@@ -16,7 +17,12 @@
       "email": "mike.koetter@gmail.com"
     }
   ],
-  "license": "See License in LICENSE",
+  "repository" :
+  { 
+    "type" : "git",
+    "url" : "https://github.com/OpenDrives/node-libzfs.git"
+  },
+  "license": "CDDL-1.1",
   "dependencies": {
     "nan": "^2.6.2"
   },

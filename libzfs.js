@@ -12,10 +12,9 @@ module.exports = {
 		if(!status) return undefined;
 		status.scan['state_name'] = names.getScanStateNames()[status.scan.state];
 		status.scan['func_name'] = names.getPoolScanFunctionNames()[status.scan.function];
-
-		status['status_name'] = names.getPoolStatusNames()[status.status];
+		status['status_name'] = libzfs.GetEnumValue('status',status.status);
 		return status;
-	},
+	}
 
 }
 
