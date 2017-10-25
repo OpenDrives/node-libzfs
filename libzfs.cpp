@@ -23,7 +23,7 @@ typedef enum {
 /*
 * solaris overload
 */
-zpool_status_t zpool_get_status(zpool_handle_t* hndl, char** name,int errata){
+zpool_status_t zpool_get_status(zpool_handle_t* hndl, char** name,int* errata){
     return zpool_get_status(hndl,name);
 }
 
@@ -33,7 +33,7 @@ void zfs_nicebytes(uint64_t num, char *buf, size_t buflen){
 
 
 
-int zpool_read_label(int fd, nvlist_t ** nv, int stub){
+int zpool_read_label(int fd, nvlist_t ** nv, int* stub){
   return zpool_read_label(fd,nv);
 }
 
@@ -324,11 +324,12 @@ NAN_METHOD(GetPoolStatus) {
 
 
 				time_t start, end;
-				uint64_t elapsed, mins_left, hours_left;
+				uint64_t elapsed, mins_left;
+				uint64_t hours_left = 0;
 				uint64_t pass_exam, examined,to_examine, total;
 				uint_t rate;
 				double fraction_done;
-				char processed_buf[7], examined_buf[7],to_examine_buf[7], total_buf[7], rate_buf[7];
+				char examined_buf[7],to_examine_buf[7], total_buf[7];
 
 
 				/* If there's never been a scan, there's not much to say. */
@@ -359,6 +360,12 @@ NAN_METHOD(GetPoolStatus) {
 					zfs_nicebytes(examined, examined_buf, sizeof (examined_buf));
 					zfs_nicebytes(to_examine, to_examine_buf, sizeof (to_examine_buf));
 					zfs_nicebytes(total, total_buf, sizeof (total_buf));
+					if(ps->pss_state == 1){
+						Nan::Set(scan_obj, Nan::New<v8::String>("hours_left").ToLocalChecked(),Nan::New<Number>(static_cast<unsigned long> (hours_left)));        	
+						Nan::Set(scan_obj, Nan::New<v8::String>("mins_left").ToLocalChecked(),Nan::New<Number>(static_cast<unsigned long> (mins_left)));        	
+						Nan::Set(scan_obj, Nan::New<v8::String>("rate").ToLocalChecked(),Nan::New<Number>(static_cast<unsigned int> (rate)));        	
+
+					}
 
 					Nan::Set(scan_obj, Nan::New<v8::String>("state").ToLocalChecked(),Nan::New<Number>(ps->pss_state));        
 					Nan::Set(scan_obj, Nan::New<v8::String>("start").ToLocalChecked(),Nan::New<Number>(static_cast<long int> (start)));        
@@ -405,7 +412,6 @@ NAN_METHOD(ReadLabel) {
 	nvlist_t* list;
 
 	int fd;
-	int error;
 	v8::Local<v8::Object> item;
 
 	fd = open(dataset.c_str(),O_RDONLY);
@@ -418,7 +424,7 @@ NAN_METHOD(ReadLabel) {
 	        	Nan::Set(item, Nan::New<v8::String>("name").ToLocalChecked(),Nan::New<v8::String>(name).ToLocalChecked());
 			}
 
-			uint64_t guid;
+			uint64_t guid =0;
 			if(nvlist_lookup_uint64(list, ZPOOL_CONFIG_GUID, &guid) == 0){
 	        	Nan::Set(item, Nan::New<v8::String>("conf_guid").ToLocalChecked(),Nan::New<v8::String>(std::to_string(guid)).ToLocalChecked());
 			}
