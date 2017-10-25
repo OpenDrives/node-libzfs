@@ -8,25 +8,19 @@
 
 ### Download
 ```bash
-git clone https://gitlab.com/opendrives/node-libzfs.git
+git clone https://github.com/OpenDrives/node-libzfs
 cd node-libzfs
-```
-
-### Install + Build
-(requires library `/lib/libzfs.so`)
-```bash
-MAKE=gmake CC=/opt/gcc/4.4.4/bin/gcc CXX=/opt/gcc/4.4.4/bin/g++ npm install
 ```
 
 ### Try it out
 
 ```
-open@drkatz:~/node-libzfs$ sudo node bin/index.js /dev/rdsk/c3t15d1s0
+~/node-libzfs$ sudo node bin/index.js /dev/rdsk/c3t15d1s0
 * Pool [V02] was DESTROYED
 ```
 
 ```
-open@drkatz:~/node-libzfs$ sudo node bin/index.js /dev/rdsk/foobar
+~/node-libzfs$ sudo node bin/node-zpool.js /dev/rdsk/foobar
 Device [/dev/rdsk/foobar] has no label or is not a valid device
 ```
 

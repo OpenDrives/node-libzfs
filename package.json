@@ -1,7 +1,10 @@
 {
-  "name": "@opendrives/node-libzfs",
+  "name": "node-libzfs",
   "version": "1.0.0-a9",
   "description": "node connector to libzfs",
+  "bin": {
+    "node-zpool": "bin/node-zpool.js"
+  },
   "main": "libzfs.js",
   "scripts": {
     "test": "node ./node_modules/mocha/bin/mocha test"
