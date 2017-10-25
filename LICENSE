@@ -1,0 +1,14 @@
+Copyright OpenDrives. All rights reserved.
+
+The OpenDrives license applies to all parts of this sofware that are not externally
+maintained libraries.
+
+Externally maintained libraries used by this softare are:
+
+----
+  "nan@2.5.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/nodejs/nan",
+    "licenseFile": "/home/open/gitlab.com/node-libzfs/node_modules/nan/LICENSE.md"
+  }
+----

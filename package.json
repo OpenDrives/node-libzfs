@@ -1,0 +1,24 @@
+{
+  "name": "@opendrives/node-libzfs",
+  "version": "1.0.0-a9",
+  "description": "node connector to libzfs",
+  "main": "libzfs.js",
+  "scripts": {
+    "test": "node ./node_modules/mocha/bin/mocha test"
+  },
+  "author": "Michael Koetter (OpenDrives, LLC)",
+  "people": [
+    {
+      "name": "michael koetter",
+      "email": "mike.koetter@gmail.com"
+    }
+  ],
+  "license": "See License in LICENSE",
+  "dependencies": {
+    "nan": "^2.6.2"
+  },
+  "devDependencies": {
+    "assert": "^1.4.1",
+    "mocha": "^3.4.2"
+  }
+}
