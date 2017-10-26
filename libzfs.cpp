@@ -630,7 +630,7 @@ NAN_METHOD(ReadLabel) {
 		    
 		    char *name = NULL;
 
-			if (state == POOL_STATE_L2CACHE){
+			if (state == POOL_STATE_L2CACHE || state == POOL_STATE_SPARE){
 				if((libhd = libzfs_init()) == NULL){
 					//error
 					printf("* Could not init libzfs");
@@ -641,7 +641,15 @@ NAN_METHOD(ReadLabel) {
 		         */
 		        cb.cb_zhp = NULL;
 		        cb.cb_guid = guid;
-		        cb.cb_type = ZPOOL_CONFIG_L2CACHE;
+		        switch(state){
+		        	case POOL_STATE_L2CACHE: 
+		        		cb.cb_type = ZPOOL_CONFIG_L2CACHE;
+		        		break;
+		        	case POOL_STATE_SPARE:
+		        		cb.cb_type = ZPOOL_CONFIG_SPARES;
+		        		break;
+		        }
+		        
 		        if (zpool_iter(libhd, find_aux, &cb) == 1) {
 		            name = (char *)zpool_get_name(cb.cb_zhp);
 		        }
