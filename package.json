@@ -22,7 +22,7 @@
     "type" : "git",
     "url" : "https://github.com/OpenDrives/node-libzfs.git"
   },
-  "license": "CDDL-1.1",
+  "license": "CDDL-1.0",
   "dependencies": {
     "nan": "^2.6.2"
   },

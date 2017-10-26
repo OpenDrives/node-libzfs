@@ -409,6 +409,7 @@ NAN_METHOD(GetEnumValue) {
     info.GetReturnValue().Set(Nan::New<v8::String>("UNKNOWN!").ToLocalChecked());
 
     int value  = info[1]->Uint32Value();
+
     if(enumname== "status"){
 		switch(value){
     		case ZPOOL_STATUS_CORRUPT_CACHE: 
@@ -487,7 +488,66 @@ NAN_METHOD(GetEnumValue) {
     			info.GetReturnValue().Set(Nan::New<v8::String>("OK").ToLocalChecked());
     			break;
 		}
-    }else{
+    }else if(enumname== "pool_state"){
+    	switch(value){
+      		case POOL_STATE_ACTIVE:
+    			info.GetReturnValue().Set(Nan::New<v8::String>("POOL_ACTIVE").ToLocalChecked());
+    			break; 
+      		case POOL_STATE_EXPORTED:
+    			info.GetReturnValue().Set(Nan::New<v8::String>("EXPORTED").ToLocalChecked());
+    			break;
+    		case POOL_STATE_DESTROYED:
+    			info.GetReturnValue().Set(Nan::New<v8::String>("DESTROYED").ToLocalChecked());
+    			break;
+    		case POOL_STATE_SPARE:
+    			info.GetReturnValue().Set(Nan::New<v8::String>("SPARE").ToLocalChecked());
+    			break;
+    		case POOL_STATE_L2CACHE:
+    			info.GetReturnValue().Set(Nan::New<v8::String>("L2CACHE").ToLocalChecked());
+    			break;
+    		case POOL_STATE_UNINITIALIZED:
+    			info.GetReturnValue().Set(Nan::New<v8::String>("UNINITIALIZED").ToLocalChecked());
+    			break;
+    		case POOL_STATE_UNAVAIL:
+    			info.GetReturnValue().Set(Nan::New<v8::String>("UNAVAIL").ToLocalChecked());
+    			break;
+    		case POOL_STATE_POTENTIALLY_ACTIVE:
+    			info.GetReturnValue().Set(Nan::New<v8::String>("POTENTIALLY_ACTIVE").ToLocalChecked());
+    			break; 
+    	}
+    }else if(enumname== "scan_state"){
+    	switch(value){
+      		case DSS_NONE:
+    			info.GetReturnValue().Set(Nan::New<v8::String>("NONE").ToLocalChecked());
+    			break;  
+      		case DSS_SCANNING:
+    			info.GetReturnValue().Set(Nan::New<v8::String>("SCANNING").ToLocalChecked());
+    			break;  
+      		case DSS_FINISHED:
+    			info.GetReturnValue().Set(Nan::New<v8::String>("FINISHED").ToLocalChecked());
+    			break;  
+      		case DSS_CANCELED:
+    			info.GetReturnValue().Set(Nan::New<v8::String>("CANCELED").ToLocalChecked());
+    			break;  
+      		case DSS_NUM_STATES:
+    			info.GetReturnValue().Set(Nan::New<v8::String>("NUM_STATES").ToLocalChecked());
+    	}
+    }else if(enumname== "scan_function"){
+    	switch(value){
+      		case POOL_SCAN_NONE:
+    			info.GetReturnValue().Set(Nan::New<v8::String>("NONE").ToLocalChecked());
+    			break;  	
+      		case POOL_SCAN_SCRUB:
+    			info.GetReturnValue().Set(Nan::New<v8::String>("SCRUB").ToLocalChecked());
+    			break; 
+      		case POOL_SCAN_RESILVER:
+    			info.GetReturnValue().Set(Nan::New<v8::String>("RESILVER").ToLocalChecked());
+    			break; 
+      		case POOL_SCAN_FUNCS:
+    			info.GetReturnValue().Set(Nan::New<v8::String>("FUNCS").ToLocalChecked());
+    			break;     	
+    	}
+	}else{
     	info.GetReturnValue().Set(false);
     }
 
