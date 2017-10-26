@@ -39,6 +39,12 @@ int zpool_read_label(int fd, nvlist_t ** nv, int* stub){
 
 #endif
 
+typedef struct aux_cbdata {
+	const char	*cb_type;
+	uint64_t	cb_guid;
+	zpool_handle_t	*cb_zhp;
+} aux_cbdata_t;
+
 typedef struct spare_cbdata {
 	uint64_t	cb_guid;
 	zpool_handle_t	*cb_zhp;
@@ -555,6 +561,34 @@ NAN_METHOD(GetEnumValue) {
 }  
 
 
+//https://github.com/illumos/illumos-gate/blob/ed992b0aac4e5b70dc1273b1d055c0d471fbb4b1/usr/src/lib/libzfs/common/libzfs_import.c#L1473
+static int
+find_aux(zpool_handle_t *zhp, void *data)
+{
+	aux_cbdata_t *cbp = (aux_cbdata_t*)data;
+	nvlist_t **list;
+	uint_t i, count;
+	uint64_t guid;
+	nvlist_t *nvroot,*config;
+    config = zpool_get_config(zhp,NULL);
+
+	verify(nvlist_lookup_nvlist(config, ZPOOL_CONFIG_VDEV_TREE,&nvroot) == 0);
+
+	if (nvlist_lookup_nvlist_array(nvroot, cbp->cb_type,
+	    &list, &count) == 0) {
+		for (i = 0; i < count; i++) {
+			verify(nvlist_lookup_uint64(list[i],
+			    ZPOOL_CONFIG_GUID, &guid) == 0);
+			if (guid == cbp->cb_guid) {
+				cbp->cb_zhp = zhp;
+				return (1);
+			}
+		}
+	}
+	zpool_close(zhp);
+	return (0);
+}
+
 NAN_METHOD(ReadLabel) {  
    // get the param
     v8::String::Utf8Value param1(info[0]->ToString());
@@ -566,16 +600,17 @@ NAN_METHOD(ReadLabel) {
 
 	int fd;
 	v8::Local<v8::Object> item;
+	aux_cbdata_t cb = { 
+		0,
+		0,
+		0,
+	};
 
 	fd = open(dataset.c_str(),O_RDONLY);
 		if (zpool_read_label(fd, &list,NULL) != 0 || list == NULL) {
 			// printf("* Could not read label on [%s]\n",dataset.c_str());
 		}else{
 			item = Nan::New<v8::Object>();
-			char *name;
-			if(nvlist_lookup_string(list, ZPOOL_CONFIG_POOL_NAME, &name) == 0 && name != NULL){
-	        	Nan::Set(item, Nan::New<v8::String>("name").ToLocalChecked(),Nan::New<v8::String>(name).ToLocalChecked());
-			}
 
 			uint64_t guid =0;
 			if(nvlist_lookup_uint64(list, ZPOOL_CONFIG_GUID, &guid) == 0){
@@ -592,6 +627,32 @@ NAN_METHOD(ReadLabel) {
 			if(nvlist_lookup_uint64(list, ZPOOL_CONFIG_POOL_STATE,&state) == 0){
 	        	Nan::Set(item, Nan::New<v8::String>("state").ToLocalChecked(),Nan::New<Number>((int)state));
 			}
+		    
+		    char *name = NULL;
+
+			if (state == POOL_STATE_L2CACHE){
+				if((libhd = libzfs_init()) == NULL){
+					//error
+					printf("* Could not init libzfs");
+				}
+	
+		        /*
+		         * Check if any pool is currently using this l2cache device.
+		         */
+		        cb.cb_zhp = NULL;
+		        cb.cb_guid = guid;
+		        cb.cb_type = ZPOOL_CONFIG_L2CACHE;
+		        if (zpool_iter(libhd, find_aux, &cb) == 1) {
+		            name = (char *)zpool_get_name(cb.cb_zhp);
+		        }
+		        libzfs_fini(libhd);
+		    }else{
+				nvlist_lookup_string(list, ZPOOL_CONFIG_POOL_NAME, &name);	
+		    }
+
+		    if(name != NULL){
+		    	Nan::Set(item, Nan::New<v8::String>("name").ToLocalChecked(),Nan::New<v8::String>(name).ToLocalChecked());
+		    }
 
 		}
 
