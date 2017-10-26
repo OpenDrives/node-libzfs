@@ -62,26 +62,21 @@ $ node-zpool rpool
 
 
 
-## Label
-
-
-### Download
-```bash
-git clone https://github.com/OpenDrives/node-libzfs
-cd node-libzfs
-```
+## Labels
 
 ### Try it out
 
 ```
-~/node-libzfs$ sudo node bin/index.js /dev/rdsk/c3t15d1s0
-* Pool [V02] was DESTROYED
+node-zlabels /dev/dsk/c3t15d1s0
+{
+    "name": "V01",
+    "state": 0,
+    "conf_guid": "11834331267048583435",
+    "pool_guid": "15848552477060795772",
+    "state_name": "POOL_ACTIVE"
+}
 ```
 
-```
-~/node-libzfs$ sudo node bin/node-zpool.js /dev/rdsk/foobar
-Device [/dev/rdsk/foobar] has no label or is not a valid device
-```
 
 ### Using it in a script
 
@@ -89,9 +84,13 @@ Device [/dev/rdsk/foobar] has no label or is not a valid device
 var lib = require('libzfs');
 var label = lib.getLabel('/dev/rdsk/c3t15d1s0')
 console.log(label)
-// { name: 'V02', state: 2 }
-console.log(lib.getPoolStates()[label['state']]);
-// POOL_STATE_DESTROYED
+//{
+//     "name": "V01",
+//     "state": 0,
+//     "conf_guid": "11834331267048583435",
+//     "pool_guid": "15848552477060795772",
+//     "state_name": "POOL_ACTIVE"
+// }
 ```
 
 
