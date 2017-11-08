@@ -81,7 +81,7 @@ node-zlabels /dev/dsk/c3t15d1s0
 ### Using it in a script
 
 ```
-var lib = require('libzfs');
+var lib = require('node-libzfs');
 var label = lib.getLabel('/dev/rdsk/c3t15d1s0')
 console.log(label)
 //{
