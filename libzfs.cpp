@@ -297,7 +297,7 @@ get_status_config(zpool_handle_t *zhp, status_cbdata_t *cb, const char *name,
             vname = zpool_vdev_name(libhd, zhp, child[c],
                 (boolean_t)VDEV_NAME_TYPE_ID);
 
-            v8::Local<v8::Object> conf = get_status_config(zhp, cb,vname, child[c], depth + 2,isspare);
+            v8::Local<v8::Object> conf = get_status_config(zhp, cb,vname, child[c], depth + 2,(boolean_t)true);
             spares_array->Set(c,conf);
             free(vname);
         }
