@@ -33,9 +33,10 @@
 #include <nan.h>
 #include <iostream>
 #include <libzfs.h>
+#include <libzutil.h>
 #include <unistd.h>
 
-using namespace Nan;  
+using namespace Nan;
 using namespace v8;
 using namespace std;
 
@@ -60,8 +61,6 @@ zpool_status_t zpool_get_status(zpool_handle_t* hndl, char** name,int* errata){
 void zfs_nicebytes(uint64_t num, char *buf, size_t buflen){
     zfs_nicenum(num, buf, buflen);
 }
-
-
 
 int zpool_read_label(int fd, nvlist_t ** nv, int* stub){
   return zpool_read_label(fd,nv);
@@ -194,13 +193,13 @@ get_status_config(zpool_handle_t *zhp, status_cbdata_t *cb, const char *name,
     //  Physical Pathh
 
     if(nvlist_lookup_string(nv, ZPOOL_CONFIG_PHYS_PATH, &physpath) == 0 ){
-            Nan::Set(config_obj, Nan::New<v8::String>("physpath").ToLocalChecked(),Nan::New<String>(physpath).ToLocalChecked());        
+            Nan::Set(config_obj, Nan::New<v8::String>("physpath").ToLocalChecked(),Nan::New<String>(physpath).ToLocalChecked());
     }
     /*
     * Get path
     */
     if(nvlist_lookup_string(nv, ZPOOL_CONFIG_PATH, &path) == 0){
-        Nan::Set(config_obj, Nan::New<v8::String>("path").ToLocalChecked(),Nan::New<String>(path).ToLocalChecked());            
+        Nan::Set(config_obj, Nan::New<v8::String>("path").ToLocalChecked(),Nan::New<String>(path).ToLocalChecked());
     }
 
     // Vdev level errors
@@ -215,13 +214,13 @@ get_status_config(zpool_handle_t *zhp, status_cbdata_t *cb, const char *name,
     } else if (vs->vs_aux != 0) {  // What is VS_AUX ?
         //vs->vs_aux
     }
-    
-    Nan::Set(config_obj, Nan::New<v8::String>("name").ToLocalChecked(),Nan::New<String>(name).ToLocalChecked());        
-    Nan::Set(config_obj, Nan::New<v8::String>("type").ToLocalChecked(),Nan::New<String>(type).ToLocalChecked());        
-    Nan::Set(config_obj, Nan::New<v8::String>("state").ToLocalChecked(),Nan::New<String>(state).ToLocalChecked());        
-    Nan::Set(config_obj, Nan::New<v8::String>("read_errors").ToLocalChecked(),Nan::New<String>(rbuf).ToLocalChecked());        
-    Nan::Set(config_obj, Nan::New<v8::String>("write_errors").ToLocalChecked(),Nan::New<String>(wbuf).ToLocalChecked());        
-    Nan::Set(config_obj, Nan::New<v8::String>("checksum_errors").ToLocalChecked(),Nan::New<String>(cbuf).ToLocalChecked());        
+
+    Nan::Set(config_obj, Nan::New<v8::String>("name").ToLocalChecked(),Nan::New<String>(name).ToLocalChecked());
+    Nan::Set(config_obj, Nan::New<v8::String>("type").ToLocalChecked(),Nan::New<String>(type).ToLocalChecked());
+    Nan::Set(config_obj, Nan::New<v8::String>("state").ToLocalChecked(),Nan::New<String>(state).ToLocalChecked());
+    Nan::Set(config_obj, Nan::New<v8::String>("read_errors").ToLocalChecked(),Nan::New<String>(rbuf).ToLocalChecked());
+    Nan::Set(config_obj, Nan::New<v8::String>("write_errors").ToLocalChecked(),Nan::New<String>(wbuf).ToLocalChecked());
+    Nan::Set(config_obj, Nan::New<v8::String>("checksum_errors").ToLocalChecked(),Nan::New<String>(cbuf).ToLocalChecked());
 
     v8::Local<v8::Array> child_array =  Nan::New<v8::Array>(children);
     v8::Local<v8::Array> log_array;
@@ -254,7 +253,7 @@ get_status_config(zpool_handle_t *zhp, status_cbdata_t *cb, const char *name,
         free(vname);
     }
 
-    Nan::Set(config_obj, Nan::New<v8::String>("children").ToLocalChecked(),child_array);        
+    Nan::Set(config_obj, Nan::New<v8::String>("children").ToLocalChecked(),child_array);
 
     log_array =  Nan::New<v8::Array>(haslog);
     int i = 0;
@@ -269,7 +268,7 @@ get_status_config(zpool_handle_t *zhp, status_cbdata_t *cb, const char *name,
             i++;
             free(vname);
         }
-    
+
     Nan::Set(config_obj, Nan::New<v8::String>("logs").ToLocalChecked(),log_array);
     }
 
@@ -316,7 +315,7 @@ NAN_METHOD(GetPoolStatus) {
     v8::String::Utf8Value param1(info[0]->ToString());
 
     // convert it to string
-    std::string dataset = std::string(*param1);  
+    std::string dataset = std::string(*param1);
 
     zpool_handle_t  *zhp;
     zpool_status_t status;
@@ -327,7 +326,7 @@ NAN_METHOD(GetPoolStatus) {
     int depth = 0;
     boolean_t isspare = (boolean_t)false;
 
-    const char* health;               
+    const char* health;
 
     char *msgid;
 
@@ -371,7 +370,7 @@ NAN_METHOD(GetPoolStatus) {
                 /* If there's never been a scan, there's not much to say. */
                 if (ps == NULL || ps->pss_func == POOL_SCAN_NONE ||
                     ps->pss_func >= POOL_SCAN_FUNCS) {
-        
+
                 }else{
 
                     start = ps->pss_start_time;
@@ -397,31 +396,31 @@ NAN_METHOD(GetPoolStatus) {
                     zfs_nicebytes(to_examine, to_examine_buf, sizeof (to_examine_buf));
                     zfs_nicebytes(total, total_buf, sizeof (total_buf));
                     if(ps->pss_state == 1){
-                        Nan::Set(scan_obj, Nan::New<v8::String>("hours_left").ToLocalChecked(),Nan::New<Number>(static_cast<unsigned long> (hours_left)));          
-                        Nan::Set(scan_obj, Nan::New<v8::String>("mins_left").ToLocalChecked(),Nan::New<Number>(static_cast<unsigned long> (mins_left)));            
-                        Nan::Set(scan_obj, Nan::New<v8::String>("rate").ToLocalChecked(),Nan::New<Number>(static_cast<unsigned int> (rate)));           
+                        Nan::Set(scan_obj, Nan::New<v8::String>("hours_left").ToLocalChecked(),Nan::New<Number>(static_cast<unsigned long> (hours_left)));
+                        Nan::Set(scan_obj, Nan::New<v8::String>("mins_left").ToLocalChecked(),Nan::New<Number>(static_cast<unsigned long> (mins_left)));
+                        Nan::Set(scan_obj, Nan::New<v8::String>("rate").ToLocalChecked(),Nan::New<Number>(static_cast<unsigned int> (rate)));
 
                     }
 
-                    Nan::Set(scan_obj, Nan::New<v8::String>("state").ToLocalChecked(),Nan::New<Number>(ps->pss_state));        
-                    Nan::Set(scan_obj, Nan::New<v8::String>("start").ToLocalChecked(),Nan::New<Number>(static_cast<long int> (start)));        
-                    Nan::Set(scan_obj, Nan::New<v8::String>("end").ToLocalChecked(),Nan::New<Number>(static_cast<long int> (end)));        
-                    Nan::Set(scan_obj, Nan::New<v8::String>("function").ToLocalChecked(),Nan::New<Number>(ps->pss_func));   
-                    Nan::Set(scan_obj, Nan::New<v8::String>("examined").ToLocalChecked(),Nan::New<Number>( examined ));        
-                    Nan::Set(scan_obj, Nan::New<v8::String>("examined_hr").ToLocalChecked(),Nan::New<String>(examined_buf).ToLocalChecked());             
-                    Nan::Set(scan_obj, Nan::New<v8::String>("to_examine").ToLocalChecked(),Nan::New<Number>( to_examine)); 
-                    Nan::Set(scan_obj, Nan::New<v8::String>("to_examine_hr").ToLocalChecked(),Nan::New<String>(to_examine_buf).ToLocalChecked());        
-                    Nan::Set(scan_obj, Nan::New<v8::String>("total").ToLocalChecked(),Nan::New<Number>(total));        
-                    Nan::Set(scan_obj, Nan::New<v8::String>("total_hr").ToLocalChecked(),Nan::New<String>(total_buf).ToLocalChecked());   
-                    Nan::Set(scan_obj, Nan::New<v8::String>("fraction_done").ToLocalChecked(),Nan::New<Number>(fraction_done));        
-                    
+                    Nan::Set(scan_obj, Nan::New<v8::String>("state").ToLocalChecked(),Nan::New<Number>(ps->pss_state));
+                    Nan::Set(scan_obj, Nan::New<v8::String>("start").ToLocalChecked(),Nan::New<Number>(static_cast<long int> (start)));
+                    Nan::Set(scan_obj, Nan::New<v8::String>("end").ToLocalChecked(),Nan::New<Number>(static_cast<long int> (end)));
+                    Nan::Set(scan_obj, Nan::New<v8::String>("function").ToLocalChecked(),Nan::New<Number>(ps->pss_func));
+                    Nan::Set(scan_obj, Nan::New<v8::String>("examined").ToLocalChecked(),Nan::New<Number>( examined ));
+                    Nan::Set(scan_obj, Nan::New<v8::String>("examined_hr").ToLocalChecked(),Nan::New<String>(examined_buf).ToLocalChecked());
+                    Nan::Set(scan_obj, Nan::New<v8::String>("to_examine").ToLocalChecked(),Nan::New<Number>( to_examine));
+                    Nan::Set(scan_obj, Nan::New<v8::String>("to_examine_hr").ToLocalChecked(),Nan::New<String>(to_examine_buf).ToLocalChecked());
+                    Nan::Set(scan_obj, Nan::New<v8::String>("total").ToLocalChecked(),Nan::New<Number>(total));
+                    Nan::Set(scan_obj, Nan::New<v8::String>("total_hr").ToLocalChecked(),Nan::New<String>(total_buf).ToLocalChecked());
+                    Nan::Set(scan_obj, Nan::New<v8::String>("fraction_done").ToLocalChecked(),Nan::New<Number>(fraction_done));
+
                 }
                 conf_obj = get_status_config(zhp, cb, dataset.c_str(), nvroot, depth + 2,isspare);
 
             }
 
 
-            Nan::Set(pool_obj, Nan::New<v8::String>("name").ToLocalChecked(),Nan::New<String>(dataset).ToLocalChecked());        
+            Nan::Set(pool_obj, Nan::New<v8::String>("name").ToLocalChecked(),Nan::New<String>(dataset).ToLocalChecked());
             Nan::Set(pool_obj, Nan::New<v8::String>("guid").ToLocalChecked(),Nan::New<String>(std::to_string(pool_guid)).ToLocalChecked());
             Nan::Set(pool_obj, Nan::New<v8::String>("state").ToLocalChecked(),Nan::New<String>(health).ToLocalChecked());
             Nan::Set(pool_obj, Nan::New<v8::String>("status").ToLocalChecked(),Nan::New<Number>((int)status));
@@ -448,7 +447,7 @@ NAN_METHOD(GetEnumValue) {
 
     if(enumname== "status"){
         switch(value){
-            case ZPOOL_STATUS_CORRUPT_CACHE: 
+            case ZPOOL_STATUS_CORRUPT_CACHE:
                 info.GetReturnValue().Set(Nan::New<v8::String>("CORRUPT_CACHE").ToLocalChecked());
                 break;
             case ZPOOL_STATUS_MISSING_DEV_R:
@@ -528,7 +527,7 @@ NAN_METHOD(GetEnumValue) {
         switch(value){
             case POOL_STATE_ACTIVE:
                 info.GetReturnValue().Set(Nan::New<v8::String>("POOL_ACTIVE").ToLocalChecked());
-                break; 
+                break;
             case POOL_STATE_EXPORTED:
                 info.GetReturnValue().Set(Nan::New<v8::String>("EXPORTED").ToLocalChecked());
                 break;
@@ -549,22 +548,22 @@ NAN_METHOD(GetEnumValue) {
                 break;
             case POOL_STATE_POTENTIALLY_ACTIVE:
                 info.GetReturnValue().Set(Nan::New<v8::String>("POTENTIALLY_ACTIVE").ToLocalChecked());
-                break; 
+                break;
         }
     }else if(enumname== "scan_state"){
         switch(value){
             case DSS_NONE:
                 info.GetReturnValue().Set(Nan::New<v8::String>("NONE").ToLocalChecked());
-                break;  
+                break;
             case DSS_SCANNING:
                 info.GetReturnValue().Set(Nan::New<v8::String>("SCANNING").ToLocalChecked());
-                break;  
+                break;
             case DSS_FINISHED:
                 info.GetReturnValue().Set(Nan::New<v8::String>("FINISHED").ToLocalChecked());
-                break;  
+                break;
             case DSS_CANCELED:
                 info.GetReturnValue().Set(Nan::New<v8::String>("CANCELED").ToLocalChecked());
-                break;  
+                break;
             case DSS_NUM_STATES:
                 info.GetReturnValue().Set(Nan::New<v8::String>("NUM_STATES").ToLocalChecked());
         }
@@ -572,23 +571,23 @@ NAN_METHOD(GetEnumValue) {
         switch(value){
             case POOL_SCAN_NONE:
                 info.GetReturnValue().Set(Nan::New<v8::String>("NONE").ToLocalChecked());
-                break;      
+                break;
             case POOL_SCAN_SCRUB:
                 info.GetReturnValue().Set(Nan::New<v8::String>("SCRUB").ToLocalChecked());
-                break; 
+                break;
             case POOL_SCAN_RESILVER:
                 info.GetReturnValue().Set(Nan::New<v8::String>("RESILVER").ToLocalChecked());
-                break; 
+                break;
             case POOL_SCAN_FUNCS:
                 info.GetReturnValue().Set(Nan::New<v8::String>("FUNCS").ToLocalChecked());
-                break;      
+                break;
         }
     }else{
         info.GetReturnValue().Set(false);
     }
 
 
-}  
+}
 
 
 //https://github.com/illumos/illumos-gate/blob/ed992b0aac4e5b70dc1273b1d055c0d471fbb4b1/usr/src/lib/libzfs/common/libzfs_import.c#L1473
@@ -619,18 +618,18 @@ find_aux(zpool_handle_t *zhp, void *data)
     return (0);
 }
 
-NAN_METHOD(ReadLabel) {  
+NAN_METHOD(ReadLabel) {
    // get the param
     v8::String::Utf8Value param1(info[0]->ToString());
 
     // convert it to string
-    std::string dataset = std::string(*param1);  
+    std::string dataset = std::string(*param1);
 
     nvlist_t* list;
 
     int fd;
     v8::Local<v8::Object> item;
-    aux_cbdata_t cb = { 
+    aux_cbdata_t cb = {
         0,
         0,
         0,
@@ -657,7 +656,7 @@ NAN_METHOD(ReadLabel) {
             if(nvlist_lookup_uint64(list, ZPOOL_CONFIG_POOL_STATE,&state) == 0){
                 Nan::Set(item, Nan::New<v8::String>("state").ToLocalChecked(),Nan::New<Number>((int)state));
             }
-            
+
             char *name = NULL;
 
             if (state == POOL_STATE_L2CACHE || state == POOL_STATE_SPARE){
@@ -665,27 +664,27 @@ NAN_METHOD(ReadLabel) {
                     //error
                     printf("* Could not init libzfs");
                 }
-    
+
                 /*
                  * Check if any pool is currently using this l2cache device or as a spare ( returns first pool found using it as a spare)
                  */
                 cb.cb_zhp = NULL;
                 cb.cb_guid = guid;
                 switch(state){
-                    case POOL_STATE_L2CACHE: 
+                    case POOL_STATE_L2CACHE:
                         cb.cb_type = ZPOOL_CONFIG_L2CACHE;
                         break;
                     case POOL_STATE_SPARE:
                         cb.cb_type = ZPOOL_CONFIG_SPARES;
                         break;
                 }
-                
+
                 if (zpool_iter(libhd, find_aux, &cb) == 1) {
                     name = (char *)zpool_get_name(cb.cb_zhp);
                 }
                 libzfs_fini(libhd);
             }else{
-                nvlist_lookup_string(list, ZPOOL_CONFIG_POOL_NAME, &name);  
+                nvlist_lookup_string(list, ZPOOL_CONFIG_POOL_NAME, &name);
             }
 
             if(name != NULL){
