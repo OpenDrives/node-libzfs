@@ -1,3 +1,9 @@
+# node-libzfs
+
+A limited native node.js connector for libzfs
+
+*Note:Version 1.1 is compatable with ZFS 8.x*
+
 ## Native Node.js connector for libzfs.so
 
 **Very** limited implementation
@@ -92,5 +98,3 @@ console.log(label)
 //     "state_name": "POOL_ACTIVE"
 // }
 ```
-
-

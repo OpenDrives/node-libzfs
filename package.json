@@ -1,6 +1,6 @@
 {
   "name": "node-libzfs",
-  "version": "1.0.0-b1",
+  "version": "1.1.0",
   "description": "node connector to libzfs",
   "bin": {
     "node-zpool": "bin/node-zpool.js",
@@ -10,17 +10,19 @@
   "scripts": {
     "test": "node ./node_modules/mocha/bin/mocha test"
   },
-  "author": "Michael Koetter (OpenDrives, LLC)",
+  "author": "OpenDrives, LLC",
   "people": [
     {
       "name": "michael koetter",
       "email": "mike.koetter@gmail.com"
+    },{
+      "name": "Matt Moeller",
+      "email": "ultamatt@gmail.com"
     }
   ],
-  "repository" :
-  { 
-    "type" : "git",
-    "url" : "https://github.com/OpenDrives/node-libzfs.git"
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/OpenDrives/node-libzfs.git"
   },
   "license": "CDDL-1.0",
   "dependencies": {
